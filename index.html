@@ -7,163 +7,180 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a0f;
-      --surface: #12121a;
-      --surface2: #1a1a26;
-      --border: #2a2a3d;
-      --accent: #00e5a0;
-      --text: #e8e8f0;
-      --muted: #6b6b8a;
-      --offline: #ff6b6b;
+      --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a26;
+      --border: #2a2a3d; --accent: #00e5a0; --text: #e8e8f0;
+      --muted: #6b6b8a; --offline: #ff6b6b;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { height:100%; overflow:hidden; }
-    body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; display:flex; flex-direction:column; }
 
-    /* ── HEADER ── */
+    /* HEADER */
     header {
-      height:56px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 1.8rem; background:var(--surface); border-bottom:1px solid var(--border);
+      height:52px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 1.4rem; background:var(--surface); border-bottom:1px solid var(--border);
     }
-    .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; }
+    .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; }
     .logo span { color:var(--accent); }
     .badge {
-      display:flex; align-items:center; gap:0.45rem;
-      font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase;
-      color:var(--muted); padding:0.32rem 0.8rem;
+      display:flex; align-items:center; gap:0.4rem;
+      font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase;
+      color:var(--muted); padding:0.28rem 0.72rem;
       border:1px solid var(--border); border-radius:2rem;
     }
-    .dot { width:7px; height:7px; border-radius:50%; background:var(--muted); transition:background 0.3s,box-shadow 0.3s; }
-    .dot.live { background:var(--accent); box-shadow:0 0 7px var(--accent); animation:blink 2s infinite; }
+    .dot { width:6px; height:6px; border-radius:50%; background:var(--muted); transition:all 0.3s; }
+    .dot.live { background:var(--accent); box-shadow:0 0 6px var(--accent); animation:blink 2s infinite; }
     .dot.dead { background:var(--offline); }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* ── LAYOUT ── */
-    main { display:grid; grid-template-columns:330px 1fr; height:calc(100vh - 56px); }
-    .sidebar { background:var(--surface); border-right:1px solid var(--border); overflow-y:auto; }
-    .sec { padding:1.1rem 1.3rem; border-bottom:1px solid var(--border); }
-    .lbl { font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:0.7rem; }
+    /* MAIN GRID */
+    main { flex:1; display:grid; grid-template-columns:290px 1fr; overflow:hidden; }
 
-    /* ── ROLE TOGGLE ── */
-    .rtoggle { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; }
+    /* SIDEBAR — key: height 100%, overflow-y scroll */
+    .sidebar {
+      height:100%; overflow-y:auto; overflow-x:hidden;
+      background:var(--surface); border-right:1px solid var(--border);
+      scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+    }
+    .sidebar::-webkit-scrollbar { width:3px; }
+    .sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+    /* SECTIONS */
+    .sec { border-bottom:1px solid var(--border); }
+    .sec-hd {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0.7rem 1.1rem; cursor:pointer; user-select:none;
+    }
+    .sec-hd:hover { background:rgba(255,255,255,0.02); }
+    .lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+    .arrow { font-size:0.55rem; color:var(--muted); transition:transform 0.2s; }
+    .arrow.open { transform:rotate(180deg); }
+    .sec-bd { padding:0 1.1rem 0.8rem; }
+    .sec-bd.shut { display:none; }
+
+    /* Non-collapsible section */
+    .sec-plain { padding:0.7rem 1.1rem; border-bottom:1px solid var(--border); }
+
+    /* ROLE TOGGLE */
+    .rtoggle { display:grid; grid-template-columns:1fr 1fr; gap:0.4rem; }
     .rbtn {
-      padding:0.62rem; border:1px solid var(--border); background:transparent; color:var(--muted);
-      font-family:'DM Mono',monospace; font-size:0.7rem; cursor:pointer; border-radius:6px; transition:all 0.15s;
+      padding:0.55rem; border:1px solid var(--border); background:transparent; color:var(--muted);
+      font-family:'DM Mono',monospace; font-size:0.68rem; cursor:pointer; border-radius:5px; transition:all 0.15s;
     }
     .rbtn:hover { border-color:var(--accent); color:var(--accent); }
     .rbtn.on { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
 
-    /* ── ROOM BOX ── */
+    /* ROOM BOX */
     .rbox {
       background:var(--surface2); border:1px solid var(--border);
-      border-radius:6px; padding:0.75rem 0.9rem;
-      display:flex; align-items:center; justify-content:space-between; gap:0.5rem;
+      border-radius:5px; padding:0.6rem 0.8rem;
+      display:flex; align-items:center; justify-content:space-between; gap:0.4rem;
     }
-    .rid { font-size:0.8rem; color:var(--accent); letter-spacing:0.06em; word-break:break-all; }
+    .rid { font-size:0.75rem; color:var(--accent); letter-spacing:0.05em; word-break:break-all; }
     .cbtn {
       background:none; border:1px solid var(--border); color:var(--muted);
-      padding:0.26rem 0.5rem; border-radius:4px; cursor:pointer;
-      font-size:0.6rem; font-family:'DM Mono',monospace; white-space:nowrap; transition:all 0.15s;
+      padding:0.22rem 0.45rem; border-radius:3px; cursor:pointer;
+      font-size:0.58rem; font-family:'DM Mono',monospace; white-space:nowrap; transition:all 0.15s;
     }
     .cbtn:hover { border-color:var(--accent); color:var(--accent); }
 
-    /* ── SHARE BUTTONS ── */
-    .sbtns { display:flex; flex-direction:column; gap:0.45rem; }
+    /* SHARE BUTTONS */
+    .sbtns { display:flex; flex-direction:column; gap:0.4rem; }
     .sbtn {
-      display:flex; align-items:center; gap:0.65rem;
-      padding:0.68rem 0.85rem; border:1px solid var(--border); background:transparent; color:var(--text);
-      font-family:'DM Mono',monospace; font-size:0.7rem; cursor:pointer;
-      text-decoration:none; border-radius:6px; transition:all 0.15s;
+      display:flex; align-items:center; gap:0.55rem;
+      padding:0.58rem 0.75rem; border:1px solid var(--border); background:transparent; color:var(--text);
+      font-family:'DM Mono',monospace; font-size:0.68rem; cursor:pointer;
+      text-decoration:none; border-radius:5px; transition:all 0.15s;
     }
     .sbtn:hover { transform:translateX(3px); }
     .sbtn.wa:hover { border-color:#25d366; color:#25d366; }
     .sbtn.em:hover { border-color:#7b9cff; color:#7b9cff; }
-    .si { width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.82rem; flex-shrink:0; }
-    .si.wa { background:rgba(37,211,102,0.14); }
-    .si.em { background:rgba(123,156,255,0.14); }
+    .si { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; }
+    .si.wa { background:rgba(37,211,102,0.12); }
+    .si.em { background:rgba(123,156,255,0.12); }
 
-    /* ── COORDS ── */
-    .cgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.4rem; }
-    .cbox { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:0.62rem 0.72rem; }
-    .clbl { font-size:0.57rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.18rem; }
-    .cval { font-size:0.76rem; color:var(--accent); }
-    .ts { margin-top:0.4rem; font-size:0.65rem; color:var(--muted); }
+    /* COORDS */
+    .cgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.35rem; }
+    .cbox { background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:0.5rem 0.65rem; }
+    .clbl { font-size:0.54rem; color:var(--muted); letter-spacing:0.09em; text-transform:uppercase; margin-bottom:0.14rem; }
+    .cval { font-size:0.72rem; color:var(--accent); }
+    .ts { margin-top:0.35rem; font-size:0.62rem; color:var(--muted); }
 
-    /* ── SELECTOR CHIPS ── */
-    .chips { display:flex; flex-wrap:wrap; gap:0.4rem; }
+    /* CHIPS */
+    .chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
     .chip {
-      padding:0.32rem 0.65rem; border:1px solid var(--border); background:transparent;
-      color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem;
+      padding:0.28rem 0.58rem; border:1px solid var(--border); background:transparent;
+      color:var(--muted); font-family:'DM Mono',monospace; font-size:0.62rem;
       border-radius:4px; cursor:pointer; transition:all 0.15s;
     }
     .chip:hover { border-color:var(--accent); color:var(--accent); }
     .chip.on { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
 
-    /* ── CUSTOM INPUT ROW ── */
-    .custom-row {
-      display:flex; gap:0.4rem; margin-top:0.5rem; align-items:center;
-    }
+    /* CUSTOM ROW */
+    .custom-row { display:flex; gap:0.35rem; margin-top:0.45rem; align-items:center; }
     .custom-row input {
       flex:1; background:var(--surface2); border:1px solid var(--border); color:var(--text);
-      padding:0.38rem 0.6rem; border-radius:4px; font-family:'DM Mono',monospace;
-      font-size:0.68rem; outline:none; transition:border-color 0.15s;
+      padding:0.32rem 0.55rem; border-radius:4px; font-family:'DM Mono',monospace;
+      font-size:0.65rem; outline:none; transition:border-color 0.15s; min-width:0;
     }
     .custom-row input:focus { border-color:var(--accent); }
-    .custom-row span { font-size:0.65rem; color:var(--muted); white-space:nowrap; }
+    .custom-row span { font-size:0.62rem; color:var(--muted); white-space:nowrap; }
     .custom-row button {
-      padding:0.38rem 0.7rem; background:var(--surface2); border:1px solid var(--border);
-      color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem;
-      border-radius:4px; cursor:pointer; transition:all 0.15s;
+      padding:0.32rem 0.6rem; background:var(--surface2); border:1px solid var(--border);
+      color:var(--muted); font-family:'DM Mono',monospace; font-size:0.62rem;
+      border-radius:4px; cursor:pointer; transition:all 0.15s; white-space:nowrap;
     }
     .custom-row button:hover { border-color:var(--accent); color:var(--accent); }
 
-    /* ── TRAIL INFO ── */
-    .trail-info {
-      margin-top:0.5rem; padding:0.5rem 0.7rem;
+    /* INFO BOX */
+    .info-box {
+      margin-top:0.45rem; padding:0.45rem 0.65rem;
       background:var(--surface2); border:1px solid var(--border);
-      border-radius:6px; font-size:0.65rem; color:var(--muted);
-      line-height:1.6;
+      border-radius:5px; font-size:0.62rem; color:var(--muted); line-height:1.6;
     }
-    .trail-info span { color:var(--accent); }
+    .info-box span { color:var(--accent); }
 
-    /* ── ACTION BUTTON ── */
+    /* ACTION BUTTON */
     .abtn {
-      width:100%; padding:0.82rem; background:var(--accent); color:#000; border:none;
-      border-radius:6px; font-family:'Syne',sans-serif; font-weight:700;
-      font-size:0.8rem; letter-spacing:0.04em; cursor:pointer; transition:all 0.15s;
+      width:100%; padding:0.75rem; background:var(--accent); color:#000; border:none;
+      border-radius:5px; font-family:'Syne',sans-serif; font-weight:700;
+      font-size:0.78rem; letter-spacing:0.04em; cursor:pointer; transition:all 0.15s;
     }
     .abtn:hover { background:#00ffb3; transform:translateY(-1px); }
     .abtn.stop { background:transparent; border:1px solid var(--offline); color:var(--offline); }
-    .abtn.stop:hover { background:rgba(255,107,107,0.1); }
+    .abtn.stop:hover { background:rgba(255,107,107,0.08); }
 
-    /* ── ROOM INPUT ── */
+    /* ROOM INPUT */
     .rinput {
       width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text);
-      padding:0.7rem 0.82rem; border-radius:6px; font-family:'DM Mono',monospace;
-      font-size:0.76rem; outline:none; margin-bottom:0.55rem; transition:border-color 0.15s;
+      padding:0.62rem 0.75rem; border-radius:5px; font-family:'DM Mono',monospace;
+      font-size:0.72rem; outline:none; margin-bottom:0.5rem; transition:border-color 0.15s;
     }
     .rinput:focus { border-color:var(--accent); }
 
-    /* ── MAP ── */
+    /* MAP */
     #map { width:100%; height:100%; }
-
-    /* ── TOAST ── */
-    .toast {
-      position:fixed; bottom:1.4rem; right:1.4rem;
-      background:var(--surface2); border:1px solid var(--accent); color:var(--accent);
-      padding:0.65rem 1rem; border-radius:6px; font-size:0.7rem;
-      letter-spacing:0.04em; z-index:9999; animation:sup 0.22s ease;
-    }
-    .toast.err { border-color:var(--offline); color:var(--offline); }
-    @keyframes sup { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-
-    .hidden { display:none !important; }
     .leaflet-tile { filter:brightness(0.55) saturate(0.4) hue-rotate(185deg); }
     .leaflet-container { background:#0a0a0f !important; }
 
-    @media(max-width:680px){
-      main { grid-template-columns:1fr; grid-template-rows:auto 1fr; height:auto; }
-      #map { height:52vh; }
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:1.2rem; right:1.2rem;
+      background:var(--surface2); border:1px solid var(--accent); color:var(--accent);
+      padding:0.6rem 0.95rem; border-radius:5px; font-size:0.68rem;
+      letter-spacing:0.04em; z-index:9999; animation:sup 0.2s ease;
+    }
+    .toast.err { border-color:var(--offline); color:var(--offline); }
+    @keyframes sup { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+    .hidden { display:none !important; }
+    .mt { margin-top:0.45rem; }
+
+    @media(max-width:640px){
+      main { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+      .sidebar { height:auto; max-height:55vh; }
+      #map { height:45vh; }
     }
   </style>
 </head>
@@ -180,9 +197,9 @@
 <main>
   <aside class="sidebar">
 
-    <!-- MODE -->
-    <div class="sec">
-      <div class="lbl">Mode</div>
+    <!-- MODE — always visible, no collapse -->
+    <div class="sec-plain">
+      <div class="lbl" style="margin-bottom:0.5rem;">Mode</div>
       <div class="rtoggle">
         <button class="rbtn on" id="bHost" onclick="setRole('host')">📡 Share</button>
         <button class="rbtn"    id="bView" onclick="setRole('viewer')">👁 View</button>
@@ -192,58 +209,81 @@
     <!-- ═══ HOST PANEL ═══ -->
     <div id="hPanel">
 
+      <!-- Session link — collapsed by default to save space -->
       <div class="sec">
-        <div class="lbl">Session Link</div>
-        <div class="rbox">
-          <span class="rid" id="rDisp">—</span>
-          <button class="cbtn" onclick="copyLink()">COPY</button>
+        <div class="sec-hd" onclick="toggle(this)">
+          <span class="lbl">Session Link</span>
+          <span class="arrow open">▼</span>
+        </div>
+        <div class="sec-bd">
+          <div class="rbox">
+            <span class="rid" id="rDisp">—</span>
+            <button class="cbtn" onclick="copyLink()">COPY</button>
+          </div>
         </div>
       </div>
 
+      <!-- Share via -->
       <div class="sec">
-        <div class="lbl">Share Via</div>
-        <div class="sbtns">
-          <a class="sbtn wa" id="waBtn" href="#" target="_blank" rel="noopener">
-            <div class="si wa">💬</div> Share on WhatsApp
-          </a>
-          <a class="sbtn em" id="emBtn" href="#" target="_blank" rel="noopener">
-            <div class="si em">✉️</div> Share via Email
-          </a>
+        <div class="sec-hd" onclick="toggle(this)">
+          <span class="lbl">Share Via</span>
+          <span class="arrow open">▼</span>
+        </div>
+        <div class="sec-bd">
+          <div class="sbtns">
+            <a class="sbtn wa" id="waBtn" href="#" target="_blank" rel="noopener">
+              <div class="si wa">💬</div> WhatsApp
+            </a>
+            <a class="sbtn em" id="emBtn" href="#" target="_blank" rel="noopener">
+              <div class="si em">✉️</div> Email
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- PING INTERVAL -->
+      <!-- Ping interval -->
       <div class="sec">
-        <div class="lbl">Ping Interval</div>
-        <div class="chips" id="intervalChips">
-          <button class="chip"     onclick="setInterval_(10000)">10s</button>
-          <button class="chip"     onclick="setInterval_(20000)">20s</button>
-          <button class="chip on"  onclick="setInterval_(30000)">30s</button>
-          <button class="chip"     onclick="setInterval_(45000)">45s</button>
-          <button class="chip"     onclick="setInterval_(60000)">1m</button>
-          <button class="chip"     onclick="setInterval_(120000)">2m</button>
+        <div class="sec-hd" onclick="toggle(this)">
+          <span class="lbl">Ping Interval</span>
+          <span class="arrow open">▼</span>
         </div>
-        <div class="custom-row">
-          <input type="number" id="customInterval" placeholder="e.g. 90" min="5" max="600" />
-          <span>sec</span>
-          <button onclick="applyCustomInterval()">Set</button>
-        </div>
-        <div class="trail-info" id="intervalInfo">
-          History depth: <span id="depthTxt">—</span> at this interval with 200 points
+        <div class="sec-bd">
+          <div class="chips" id="intervalChips">
+            <button class="chip"    onclick="setInterval_(10000,this)">10s</button>
+            <button class="chip"    onclick="setInterval_(20000,this)">20s</button>
+            <button class="chip on" onclick="setInterval_(30000,this)">30s</button>
+            <button class="chip"    onclick="setInterval_(45000,this)">45s</button>
+            <button class="chip"    onclick="setInterval_(60000,this)">1m</button>
+            <button class="chip"    onclick="setInterval_(120000,this)">2m</button>
+          </div>
+          <div class="custom-row">
+            <input type="number" id="customInterval" placeholder="e.g. 90" min="5" max="600" />
+            <span>sec</span>
+            <button onclick="applyCustomInterval()">Set</button>
+          </div>
+          <div class="info-box">
+            Depth: <span id="depthTxt">~100 mins</span> @ 200 pts
+          </div>
         </div>
       </div>
 
-      <!-- POSITION -->
+      <!-- Position -->
       <div class="sec">
-        <div class="lbl">Your Position</div>
-        <div class="cgrid">
-          <div class="cbox"><div class="clbl">Latitude</div><div class="cval" id="hLat">—</div></div>
-          <div class="cbox"><div class="clbl">Longitude</div><div class="cval" id="hLng">—</div></div>
+        <div class="sec-hd" onclick="toggle(this)">
+          <span class="lbl">Your Position</span>
+          <span class="arrow open">▼</span>
         </div>
-        <div class="ts" id="hTs">Not started</div>
+        <div class="sec-bd">
+          <div class="cgrid">
+            <div class="cbox"><div class="clbl">Lat</div><div class="cval" id="hLat">—</div></div>
+            <div class="cbox"><div class="clbl">Lng</div><div class="cval" id="hLng">—</div></div>
+          </div>
+          <div class="ts" id="hTs">Not started</div>
+        </div>
       </div>
 
-      <div class="sec">
+      <!-- Start/Stop -->
+      <div class="sec-plain">
         <button class="abtn" id="hBtn" onclick="toggleShare()">Start Sharing Location</button>
       </div>
 
@@ -252,38 +292,49 @@
     <!-- ═══ VIEWER PANEL ═══ -->
     <div id="vPanel" class="hidden">
 
-      <div class="sec">
-        <div class="lbl">Room ID</div>
+      <!-- Room ID -->
+      <div class="sec-plain">
+        <div class="lbl" style="margin-bottom:0.5rem;">Room ID</div>
         <input class="rinput" id="rInput" type="text" placeholder="e.g. abc-xyz-123" />
         <button class="abtn" onclick="startView()">View Location</button>
       </div>
 
-      <!-- TRAIL POINTS SELECTOR -->
+      <!-- Trail history -->
       <div class="sec">
-        <div class="lbl">Trail History</div>
-        <div class="chips" id="pointChips">
-          <button class="chip"     onclick="setPoints(10)">10</button>
-          <button class="chip"     onclick="setPoints(20)">20</button>
-          <button class="chip"     onclick="setPoints(25)">25</button>
-          <button class="chip on"  onclick="setPoints(50)">50</button>
-          <button class="chip"     onclick="setPoints(100)">100</button>
-          <button class="chip"     onclick="setPoints(200)">200</button>
+        <div class="sec-hd" onclick="toggle(this)">
+          <span class="lbl">Trail History</span>
+          <span class="arrow open">▼</span>
         </div>
-        <div class="trail-info" id="trailInfo">
-          Showing last <span id="pointsTxt">50</span> points
-          — host interval: <span id="hostIntervalTxt">—</span>
-          — covers ~<span id="coversTxt">—</span>
+        <div class="sec-bd">
+          <div class="chips" id="pointChips">
+            <button class="chip"    onclick="setPoints(10,this)">10</button>
+            <button class="chip"    onclick="setPoints(20,this)">20</button>
+            <button class="chip"    onclick="setPoints(25,this)">25</button>
+            <button class="chip on" onclick="setPoints(50,this)">50</button>
+            <button class="chip"    onclick="setPoints(100,this)">100</button>
+            <button class="chip"    onclick="setPoints(200,this)">200</button>
+          </div>
+          <div class="info-box mt">
+            Showing <span id="pointsTxt">50</span> pts
+            · host every <span id="hostIntervalTxt">—</span>
+            · ~<span id="coversTxt">—</span> history
+          </div>
         </div>
       </div>
 
-      <!-- HOST POSITION -->
+      <!-- Host position -->
       <div class="sec">
-        <div class="lbl">Host Position</div>
-        <div class="cgrid">
-          <div class="cbox"><div class="clbl">Latitude</div><div class="cval" id="vLat">—</div></div>
-          <div class="cbox"><div class="clbl">Longitude</div><div class="cval" id="vLng">—</div></div>
+        <div class="sec-hd" onclick="toggle(this)">
+          <span class="lbl">Host Position</span>
+          <span class="arrow open">▼</span>
         </div>
-        <div class="ts" id="vTs">Waiting...</div>
+        <div class="sec-bd">
+          <div class="cgrid">
+            <div class="cbox"><div class="clbl">Lat</div><div class="cval" id="vLat">—</div></div>
+            <div class="cbox"><div class="clbl">Lng</div><div class="cval" id="vLng">—</div></div>
+          </div>
+          <div class="ts" id="vTs">Waiting...</div>
+        </div>
       </div>
 
     </div>
@@ -295,36 +346,31 @@
 
 <script>
 // ── Load Leaflet dynamically ──────────────────────────────────────────────────
-(function loadLeaflet() {
-  var css    = document.createElement('link');
-  css.rel    = 'stylesheet';
-  css.href   = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+(function() {
+  var css   = document.createElement('link');
+  css.rel   = 'stylesheet';
+  css.href  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
   document.head.appendChild(css);
-
-  var js     = document.createElement('script');
-  js.src     = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-  js.onload  = bootApp;
-  js.onerror = function() { toast('⚠️ Map failed to load', true); };
+  var js    = document.createElement('script');
+  js.src    = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  js.onload = bootApp;
+  js.onerror= function(){ toast('Map failed to load',true); };
   document.head.appendChild(js);
 })();
 
 // ── Globals ───────────────────────────────────────────────────────────────────
-var API         = window.location.origin;
-var PING_MS     = 30000;   // host ping interval (ms) — user adjustable
-var POLL_MS     = 30000;   // viewer poll interval (ms) — adapts to host
-var MAX_POINTS  = 200;     // absolute max stored in Redis
-var viewPoints  = 50;      // viewer's chosen trail length
+var API        = window.location.origin;
+var PING_MS    = 30000;
+var POLL_MS    = 30000;
+var viewPoints = 50;
 
-var map, hMarker, vMarker;
-var trailLine   = null;    // Leaflet polyline
-var trailDots   = [];      // small circle markers for past points
-
-var sharing     = false;
-var watchId     = null;
-var pingTmr     = null;
-var pollTmr     = null;
-var role        = 'host';
-var roomId      = '';
+var map, hMarker, vMarker, trailLine;
+var trailDots  = [];
+var sharing    = false;
+var watchId    = null;
+var pingTmr    = null;
+var pollTmr    = null;
+var roomId     = '';
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 function bootApp() {
@@ -332,13 +378,11 @@ function bootApp() {
   syncLinks();
   updateDepthInfo();
 
-  map = L.map('map', { zoomControl: true }).setView([20.5937, 78.9629], 5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
-    maxZoom: 19
+  map = L.map('map',{ zoomControl:true }).setView([20.5937,78.9629],5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap contributors', maxZoom:19
   }).addTo(map);
 
-  // Auto-viewer if room in URL hash
   var m = location.hash.match(/room=([^&]+)/);
   if (m) {
     setRole('viewer');
@@ -347,293 +391,244 @@ function bootApp() {
   }
 }
 
-// ── Room helpers ──────────────────────────────────────────────────────────────
-function mkRoom() {
-  function s() { return Math.random().toString(36).slice(2, 6); }
-  return s() + '-' + s() + '-' + s();
+// ── Collapsible sections ──────────────────────────────────────────────────────
+function toggle(hd) {
+  var arrow = hd.querySelector('.arrow');
+  var body  = hd.nextElementSibling;
+  var open  = !body.classList.contains('shut');
+  body.classList.toggle('shut', open);
+  arrow.classList.toggle('open', !open);
 }
 
+// ── Room ──────────────────────────────────────────────────────────────────────
+function mkRoom() {
+  function s(){ return Math.random().toString(36).slice(2,6); }
+  return s()+'-'+s()+'-'+s();
+}
 function syncLinks() {
   document.getElementById('rDisp').textContent = roomId;
-  var url = location.origin + location.pathname + '#room=' + roomId;
-  var msg = encodeURIComponent('📍 Track my live location:\n' + url);
-  document.getElementById('waBtn').href = 'https://wa.me/?text=' + msg;
-  document.getElementById('emBtn').href = 'mailto:?subject=' + encodeURIComponent('My Live Location') + '&body=' + msg;
+  var url = location.origin+location.pathname+'#room='+roomId;
+  var msg = encodeURIComponent('📍 Track my live location:\n'+url);
+  document.getElementById('waBtn').href = 'https://wa.me/?text='+msg;
+  document.getElementById('emBtn').href = 'mailto:?subject='+encodeURIComponent('My Live Location')+'&body='+msg;
 }
-
 function copyLink() {
-  var url = location.origin + location.pathname + '#room=' + roomId;
-  navigator.clipboard.writeText(url).then(function() { toast('Link copied!'); });
+  var url = location.origin+location.pathname+'#room='+roomId;
+  navigator.clipboard.writeText(url).then(function(){ toast('Link copied!'); });
 }
 
-// ── Role switching ────────────────────────────────────────────────────────────
+// ── Role ──────────────────────────────────────────────────────────────────────
 function setRole(r) {
-  role = r;
-  document.getElementById('bHost').classList.toggle('on', r === 'host');
-  document.getElementById('bView').classList.toggle('on', r === 'viewer');
-  document.getElementById('hPanel').classList.toggle('hidden', r !== 'host');
-  document.getElementById('vPanel').classList.toggle('hidden', r !== 'viewer');
-  if (r === 'host')   stopView();
-  if (r === 'viewer') stopShare();
+  document.getElementById('bHost').classList.toggle('on', r==='host');
+  document.getElementById('bView').classList.toggle('on', r==='viewer');
+  document.getElementById('hPanel').classList.toggle('hidden', r!=='host');
+  document.getElementById('vPanel').classList.toggle('hidden', r!=='viewer');
+  if (r==='host')   stopView();
+  if (r==='viewer') stopShare();
 }
 
-// ── HOST: Interval selector ───────────────────────────────────────────────────
-function setInterval_(ms) {
+// ── HOST: Interval ────────────────────────────────────────────────────────────
+function setInterval_(ms, btn) {
   PING_MS = ms;
-  // Update chip UI
-  var chips = document.getElementById('intervalChips').children;
-  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
-  event.target.classList.add('on');
+  var chips = document.getElementById('intervalChips').querySelectorAll('.chip');
+  chips.forEach(function(c){ c.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
   updateDepthInfo();
-  // Restart timer if already sharing
-  if (sharing) { clearInterval(pingTmr); startPingTimer(); }
+  if (sharing){ clearInterval(pingTmr); startPingTimer(); }
 }
-
 function applyCustomInterval() {
   var val = parseInt(document.getElementById('customInterval').value);
-  if (!val || val < 5 || val > 600) { toast('Enter 5–600 seconds', true); return; }
-  PING_MS = val * 1000;
-  // Deselect all chips
-  var chips = document.getElementById('intervalChips').children;
-  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  if (!val || val<5 || val>600){ toast('Enter 5–600 seconds',true); return; }
+  PING_MS = val*1000;
+  var chips = document.getElementById('intervalChips').querySelectorAll('.chip');
+  chips.forEach(function(c){ c.classList.remove('on'); });
   updateDepthInfo();
-  toast('Interval set to ' + val + 's');
-  if (sharing) { clearInterval(pingTmr); startPingTimer(); }
+  toast('Interval set to '+val+'s');
+  if (sharing){ clearInterval(pingTmr); startPingTimer(); }
 }
-
 function updateDepthInfo() {
-  var totalSecs = (PING_MS / 1000) * MAX_POINTS;
-  document.getElementById('depthTxt').textContent = fmtDuration(totalSecs);
+  var secs = (PING_MS/1000)*200;
+  document.getElementById('depthTxt').textContent = '~'+fmtDuration(secs);
 }
 
 // ── HOST: Sharing ─────────────────────────────────────────────────────────────
-function toggleShare() { sharing ? stopShare() : startShare(); }
-
+function toggleShare(){ sharing ? stopShare() : startShare(); }
 function startShare() {
-  if (!navigator.geolocation) { toast('Geolocation not supported', true); return; }
+  if (!navigator.geolocation){ toast('Geolocation not supported',true); return; }
   sharing = true;
-  setStatus('live', 'Broadcasting');
+  setStatus('live','Broadcasting');
   var btn = document.getElementById('hBtn');
-  btn.textContent = 'Stop Sharing';
-  btn.classList.add('stop');
-
-  // Watch for immediate position updates
+  btn.textContent = 'Stop Sharing'; btn.classList.add('stop');
   watchId = navigator.geolocation.watchPosition(
-    function(p) { onGPS(p.coords.latitude, p.coords.longitude); },
-    function(e) { toast('GPS: ' + e.message, true); },
-    { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 }
+    function(p){ onGPS(p.coords.latitude,p.coords.longitude); },
+    function(e){ toast('GPS: '+e.message,true); },
+    { enableHighAccuracy:true, maximumAge:10000, timeout:20000 }
   );
-
   startPingTimer();
 }
-
 function startPingTimer() {
-  pingTmr = setInterval(function() {
+  pingTmr = setInterval(function(){
     navigator.geolocation.getCurrentPosition(
-      function(p) { doPing(p.coords.latitude, p.coords.longitude); },
-      function() {},
-      { maximumAge: 20000 }
+      function(p){ doPing(p.coords.latitude,p.coords.longitude); },
+      function(){}, { maximumAge:20000 }
     );
   }, PING_MS);
 }
-
 function stopShare() {
   sharing = false;
-  if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
-  clearInterval(pingTmr); pingTmr = null;
-  setStatus('', 'Idle');
+  if (watchId!==null){ navigator.geolocation.clearWatch(watchId); watchId=null; }
+  clearInterval(pingTmr); pingTmr=null;
+  setStatus('','Idle');
   var btn = document.getElementById('hBtn');
-  btn.textContent = 'Start Sharing Location';
-  btn.classList.remove('stop');
+  btn.textContent='Start Sharing Location'; btn.classList.remove('stop');
 }
-
-function onGPS(lat, lng) {
+function onGPS(lat,lng) {
   document.getElementById('hLat').textContent = lat.toFixed(6);
   document.getElementById('hLng').textContent = lng.toFixed(6);
-  document.getElementById('hTs').textContent  = 'Updated ' + new Date().toLocaleTimeString();
-  putMarker('h', lat, lng);
-  doPing(lat, lng);
+  document.getElementById('hTs').textContent  = 'Updated '+new Date().toLocaleTimeString();
+  putMarker('h',lat,lng);
+  doPing(lat,lng);
+}
+function doPing(lat,lng) {
+  fetch(API+'/api/ping',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ roomId:roomId, lat:lat, lng:lng, timestamp:Date.now(), interval:PING_MS })
+  }).catch(function(){ toast('Ping failed',true); });
 }
 
-function doPing(lat, lng) {
-  fetch(API + '/api/ping', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      roomId:    roomId,
-      lat:       lat,
-      lng:       lng,
-      timestamp: Date.now(),
-      interval:  PING_MS,
-    }),
-  }).catch(function() { toast('Ping failed', true); });
-}
-
-// ── VIEWER: Points selector ───────────────────────────────────────────────────
-function setPoints(n) {
+// ── VIEWER: Points ────────────────────────────────────────────────────────────
+function setPoints(n, btn) {
   viewPoints = n;
-  var chips = document.getElementById('pointChips').children;
-  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
-  event.target.classList.add('on');
+  var chips = document.getElementById('pointChips').querySelectorAll('.chip');
+  chips.forEach(function(c){ c.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
   document.getElementById('pointsTxt').textContent = n;
-  // Re-poll immediately with new count
-  if (pollTmr) {
-    var rid = document.getElementById('rInput').value.trim();
-    if (rid) doPoll(rid);
-  }
+  var rid = document.getElementById('rInput').value.trim();
+  if (rid && pollTmr) doPoll(rid);
 }
 
 // ── VIEWER: Polling ───────────────────────────────────────────────────────────
 function startView() {
   var rid = document.getElementById('rInput').value.trim();
-  if (!rid) { toast('Enter a Room ID', true); return; }
+  if (!rid){ toast('Enter a Room ID',true); return; }
   stopView();
-  setStatus('live', 'Watching');
+  setStatus('live','Watching');
   doPoll(rid);
-  pollTmr = setInterval(function() { doPoll(rid); }, POLL_MS);
+  pollTmr = setInterval(function(){ doPoll(rid); }, POLL_MS);
 }
-
 function doPoll(rid) {
-  fetch(API + '/api/location/' + rid + '?points=' + viewPoints)
-    .then(function(r) {
-      if (!r.ok) {
-        if (r.status === 404) { setStatus('dead', 'No data yet'); return null; }
-        toast('Error fetching location', true); return null;
+  fetch(API+'/api/location/'+rid+'?points='+viewPoints)
+    .then(function(r){
+      if (!r.ok){
+        if (r.status===404){ setStatus('dead','No data yet'); return null; }
+        return null;
       }
       return r.json();
     })
-    .then(function(d) {
+    .then(function(d){
       if (!d) return;
-
-      // Update latest coords
       document.getElementById('vLat').textContent = parseFloat(d.lat).toFixed(6);
       document.getElementById('vLng').textContent = parseFloat(d.lng).toFixed(6);
-      document.getElementById('vTs').textContent  = 'Last seen: ' + ago(d.timestamp);
-      setStatus('live', 'Live');
+      document.getElementById('vTs').textContent  = 'Last seen: '+ago(d.timestamp);
+      setStatus('live','Live');
 
-      // Adapt poll rate to host's interval
-      if (d.interval && d.interval !== POLL_MS) {
+      // Adapt poll rate to host interval
+      if (d.interval && d.interval!==POLL_MS) {
         POLL_MS = d.interval;
         clearInterval(pollTmr);
-        pollTmr = setInterval(function() { doPoll(rid); }, POLL_MS);
+        pollTmr = setInterval(function(){ doPoll(rid); }, POLL_MS);
       }
 
-      // Update trail info
-      var hostInt = d.interval || 30000;
-      var covers  = fmtDuration((hostInt / 1000) * d.count);
-      document.getElementById('hostIntervalTxt').textContent = fmtMs(hostInt);
-      document.getElementById('coversTxt').textContent       = covers;
+      // Update info box
+      var hi = d.interval||30000;
+      document.getElementById('hostIntervalTxt').textContent = fmtMs(hi);
+      document.getElementById('coversTxt').textContent       = fmtDuration((hi/1000)*d.count);
 
-      // Draw trail on map
       drawTrail(d.trail);
     })
-    .catch(function() { setStatus('dead', 'Disconnected'); });
+    .catch(function(){ setStatus('dead','Disconnected'); });
 }
-
 function stopView() {
-  clearInterval(pollTmr); pollTmr = null;
-  setStatus('', 'Idle');
+  clearInterval(pollTmr); pollTmr=null;
+  setStatus('','Idle');
 }
 
-// ── MAP: Trail rendering ──────────────────────────────────────────────────────
+// ── MAP: Trail ────────────────────────────────────────────────────────────────
 function drawTrail(trail) {
-  if (!trail || trail.length === 0) return;
-
-  // Clear existing trail dots
-  for (var i = 0; i < trailDots.length; i++) map.removeLayer(trailDots[i]);
+  if (!trail||trail.length===0) return;
+  trailDots.forEach(function(d){ map.removeLayer(d); });
   trailDots = [];
+  if (trailLine){ map.removeLayer(trailLine); trailLine=null; }
 
-  // Remove existing polyline
-  if (trailLine) { map.removeLayer(trailLine); trailLine = null; }
+  var lls   = trail.map(function(p){ return [p.lat,p.lng]; });
+  var total = trail.length;
 
-  var latlngs = trail.map(function(p) { return [p.lat, p.lng]; });
-  var total   = trail.length;
-
-  // Draw polyline connecting all points
-  trailLine = L.polyline(latlngs, {
-    color:   '#00e5a0',
-    weight:  2,
-    opacity: 0.4,
-    dashArray: '4 6',
+  trailLine = L.polyline(lls,{
+    color:'#00e5a0', weight:2, opacity:0.35, dashArray:'4 7'
   }).addTo(map);
 
-  // Draw a small dot for each historical point (except the latest)
-  for (var j = 0; j < total - 1; j++) {
-    var p       = trail[j];
-    var opacity = 0.2 + (j / total) * 0.6; // older = more faded
-    var dot     = L.circleMarker([p.lat, p.lng], {
-      radius:      4,
-      fillColor:   '#00e5a0',
-      color:       'transparent',
-      fillOpacity: opacity,
-    }).bindTooltip(ago(p.timestamp), { permanent: false, direction: 'top' });
+  for (var i=0; i<total-1; i++) {
+    var p   = trail[i];
+    var op  = 0.15 + (i/total)*0.65;
+    var dot = L.circleMarker([p.lat,p.lng],{
+      radius:3.5, fillColor:'#00e5a0', color:'transparent', fillOpacity:op
+    }).bindTooltip(ago(p.timestamp),{ permanent:false, direction:'top' });
     dot.addTo(map);
     trailDots.push(dot);
   }
 
-  // Latest point — bright animated marker
-  var latest = trail[total - 1];
-  putMarker('v', latest.lat, latest.lng);
+  putMarker('v', trail[total-1].lat, trail[total-1].lng);
 }
 
-// ── MAP: markers ──────────────────────────────────────────────────────────────
+// ── MAP: Markers ──────────────────────────────────────────────────────────────
 function mkIcon(color) {
   return L.divIcon({
-    className: '',
-    html: '<div style="width:16px;height:16px;border-radius:50%;background:' + color +
-          ';border:2.5px solid #fff;box-shadow:0 0 0 4px ' + color + '44,0 0 14px ' + color + '88;"></div>',
-    iconSize:   [16, 16],
-    iconAnchor: [8, 8],
+    className:'',
+    html:'<div style="width:15px;height:15px;border-radius:50%;background:'+color+
+         ';border:2px solid #fff;box-shadow:0 0 0 3px '+color+'44,0 0 12px '+color+'88;"></div>',
+    iconSize:[15,15], iconAnchor:[7,7]
   });
 }
-
-function putMarker(type, lat, lng) {
-  if (type === 'h') {
-    if (!hMarker) hMarker = L.marker([lat, lng], { icon: mkIcon('#00e5a0') }).addTo(map).bindPopup('📍 You');
-    else hMarker.setLatLng([lat, lng]);
-    map.setView([lat, lng], 15);
+function putMarker(type,lat,lng) {
+  if (type==='h') {
+    if (!hMarker) hMarker=L.marker([lat,lng],{icon:mkIcon('#00e5a0')}).addTo(map).bindPopup('📍 You');
+    else hMarker.setLatLng([lat,lng]);
+    map.setView([lat,lng],15);
   } else {
-    if (!vMarker) vMarker = L.marker([lat, lng], { icon: mkIcon('#ff6b6b') }).addTo(map).bindPopup('📍 Host — latest');
-    else vMarker.setLatLng([lat, lng]);
-    map.setView([lat, lng], 15);
+    if (!vMarker) vMarker=L.marker([lat,lng],{icon:mkIcon('#ff6b6b')}).addTo(map).bindPopup('📍 Host');
+    else vMarker.setLatLng([lat,lng]);
+    map.setView([lat,lng],15);
   }
 }
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
-function setStatus(type, text) {
-  var d = document.getElementById('dot');
-  d.className = 'dot' + (type ? ' ' + type : '');
+function setStatus(type,text) {
+  document.getElementById('dot').className = 'dot'+(type?' '+type:'');
   document.getElementById('stxt').textContent = text;
 }
-
 function ago(ts) {
-  var s = Math.floor((Date.now() - ts) / 1000);
-  if (s < 60)   return s + 's ago';
-  if (s < 3600) return Math.floor(s / 60) + 'm ago';
-  return Math.floor(s / 3600) + 'h ago';
+  var s=Math.floor((Date.now()-ts)/1000);
+  if (s<60)   return s+'s ago';
+  if (s<3600) return Math.floor(s/60)+'m ago';
+  return Math.floor(s/3600)+'h ago';
 }
-
-function fmtDuration(totalSecs) {
-  if (totalSecs < 60)   return Math.round(totalSecs) + 's';
-  if (totalSecs < 3600) return Math.round(totalSecs / 60) + ' mins';
-  var h = (totalSecs / 3600).toFixed(1);
-  return h + ' hrs';
+function fmtDuration(s) {
+  if (s<60)   return Math.round(s)+'s';
+  if (s<3600) return Math.round(s/60)+' mins';
+  return (s/3600).toFixed(1)+' hrs';
 }
-
 function fmtMs(ms) {
-  var s = ms / 1000;
-  if (s < 60) return s + 's';
-  return Math.round(s / 60) + 'm';
+  var s=ms/1000;
+  if (s<60) return s+'s';
+  return Math.round(s/60)+'m';
 }
-
-function toast(msg, isErr) {
-  var t = document.createElement('div');
-  t.className = 'toast' + (isErr ? ' err' : '');
-  t.textContent = msg;
+function toast(msg,isErr) {
+  var t=document.createElement('div');
+  t.className='toast'+(isErr?' err':'');
+  t.textContent=msg;
   document.body.appendChild(t);
-  setTimeout(function() { t.remove(); }, 3000);
+  setTimeout(function(){ t.remove(); },3000);
 }
 </script>
-
 </body>
 </html>
