@@ -18,65 +18,42 @@
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { height:100%; overflow:hidden; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Mono', monospace;
-    }
+    body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; }
+
+    /* ── HEADER ── */
     header {
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.8rem;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      height:56px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 1.8rem; background:var(--surface); border-bottom:1px solid var(--border);
     }
     .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; }
-    .logo span { color: var(--accent); }
-
+    .logo span { color:var(--accent); }
     .badge {
-      display: flex; align-items: center; gap: 0.45rem;
-      font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--muted); padding: 0.32rem 0.8rem;
-      border: 1px solid var(--border); border-radius: 2rem;
+      display:flex; align-items:center; gap:0.45rem;
+      font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase;
+      color:var(--muted); padding:0.32rem 0.8rem;
+      border:1px solid var(--border); border-radius:2rem;
     }
-    .dot {
-      width:7px; height:7px; border-radius:50%;
-      background: var(--muted); transition: background 0.3s, box-shadow 0.3s;
-    }
-    .dot.live   { background: var(--accent); box-shadow: 0 0 7px var(--accent); animation: blink 2s infinite; }
-    .dot.dead   { background: var(--offline); }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--muted); transition:background 0.3s,box-shadow 0.3s; }
+    .dot.live { background:var(--accent); box-shadow:0 0 7px var(--accent); animation:blink 2s infinite; }
+    .dot.dead { background:var(--offline); }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
-    main {
-      display: grid;
-      grid-template-columns: 330px 1fr;
-      height: calc(100vh - 56px);
-    }
+    /* ── LAYOUT ── */
+    main { display:grid; grid-template-columns:330px 1fr; height:calc(100vh - 56px); }
+    .sidebar { background:var(--surface); border-right:1px solid var(--border); overflow-y:auto; }
+    .sec { padding:1.1rem 1.3rem; border-bottom:1px solid var(--border); }
+    .lbl { font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:0.7rem; }
 
-    .sidebar {
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      overflow-y: auto;
-    }
-
-    .sec { padding: 1.1rem 1.3rem; border-bottom: 1px solid var(--border); }
-    .lbl {
-      font-size: 0.6rem; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 0.7rem;
-    }
-
+    /* ── ROLE TOGGLE ── */
     .rtoggle { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; }
     .rbtn {
-      padding: 0.62rem; border: 1px solid var(--border);
-      background: transparent; color: var(--muted);
-      font-family:'DM Mono',monospace; font-size:0.7rem;
-      cursor: pointer; border-radius:6px; transition:all 0.15s;
+      padding:0.62rem; border:1px solid var(--border); background:transparent; color:var(--muted);
+      font-family:'DM Mono',monospace; font-size:0.7rem; cursor:pointer; border-radius:6px; transition:all 0.15s;
     }
     .rbtn:hover { border-color:var(--accent); color:var(--accent); }
-    .rbtn.on    { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
+    .rbtn.on { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
 
+    /* ── ROOM BOX ── */
     .rbox {
       background:var(--surface2); border:1px solid var(--border);
       border-radius:6px; padding:0.75rem 0.9rem;
@@ -86,80 +63,107 @@
     .cbtn {
       background:none; border:1px solid var(--border); color:var(--muted);
       padding:0.26rem 0.5rem; border-radius:4px; cursor:pointer;
-      font-size:0.6rem; font-family:'DM Mono',monospace; white-space:nowrap;
-      transition:all 0.15s;
+      font-size:0.6rem; font-family:'DM Mono',monospace; white-space:nowrap; transition:all 0.15s;
     }
     .cbtn:hover { border-color:var(--accent); color:var(--accent); }
 
+    /* ── SHARE BUTTONS ── */
     .sbtns { display:flex; flex-direction:column; gap:0.45rem; }
     .sbtn {
       display:flex; align-items:center; gap:0.65rem;
-      padding:0.68rem 0.85rem; border:1px solid var(--border);
-      background:transparent; color:var(--text);
-      font-family:'DM Mono',monospace; font-size:0.7rem;
-      cursor:pointer; text-decoration:none; border-radius:6px;
-      transition:all 0.15s;
+      padding:0.68rem 0.85rem; border:1px solid var(--border); background:transparent; color:var(--text);
+      font-family:'DM Mono',monospace; font-size:0.7rem; cursor:pointer;
+      text-decoration:none; border-radius:6px; transition:all 0.15s;
     }
     .sbtn:hover { transform:translateX(3px); }
     .sbtn.wa:hover { border-color:#25d366; color:#25d366; }
     .sbtn.em:hover { border-color:#7b9cff; color:#7b9cff; }
-    .si {
-      width:25px; height:25px; border-radius:50%;
-      display:flex; align-items:center; justify-content:center;
-      font-size:0.82rem; flex-shrink:0;
-    }
+    .si { width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.82rem; flex-shrink:0; }
     .si.wa { background:rgba(37,211,102,0.14); }
     .si.em { background:rgba(123,156,255,0.14); }
 
+    /* ── COORDS ── */
     .cgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.4rem; }
-    .cbox {
-      background:var(--surface2); border:1px solid var(--border);
-      border-radius:6px; padding:0.62rem 0.72rem;
-    }
+    .cbox { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:0.62rem 0.72rem; }
     .clbl { font-size:0.57rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.18rem; }
     .cval { font-size:0.76rem; color:var(--accent); }
-    .ts   { margin-top:0.4rem; font-size:0.65rem; color:var(--muted); }
+    .ts { margin-top:0.4rem; font-size:0.65rem; color:var(--muted); }
 
+    /* ── SELECTOR CHIPS ── */
+    .chips { display:flex; flex-wrap:wrap; gap:0.4rem; }
+    .chip {
+      padding:0.32rem 0.65rem; border:1px solid var(--border); background:transparent;
+      color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem;
+      border-radius:4px; cursor:pointer; transition:all 0.15s;
+    }
+    .chip:hover { border-color:var(--accent); color:var(--accent); }
+    .chip.on { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
+
+    /* ── CUSTOM INPUT ROW ── */
+    .custom-row {
+      display:flex; gap:0.4rem; margin-top:0.5rem; align-items:center;
+    }
+    .custom-row input {
+      flex:1; background:var(--surface2); border:1px solid var(--border); color:var(--text);
+      padding:0.38rem 0.6rem; border-radius:4px; font-family:'DM Mono',monospace;
+      font-size:0.68rem; outline:none; transition:border-color 0.15s;
+    }
+    .custom-row input:focus { border-color:var(--accent); }
+    .custom-row span { font-size:0.65rem; color:var(--muted); white-space:nowrap; }
+    .custom-row button {
+      padding:0.38rem 0.7rem; background:var(--surface2); border:1px solid var(--border);
+      color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem;
+      border-radius:4px; cursor:pointer; transition:all 0.15s;
+    }
+    .custom-row button:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* ── TRAIL INFO ── */
+    .trail-info {
+      margin-top:0.5rem; padding:0.5rem 0.7rem;
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:6px; font-size:0.65rem; color:var(--muted);
+      line-height:1.6;
+    }
+    .trail-info span { color:var(--accent); }
+
+    /* ── ACTION BUTTON ── */
     .abtn {
-      width:100%; padding:0.82rem;
-      background:var(--accent); color:#000; border:none;
-      border-radius:6px; font-family:'Syne',sans-serif;
-      font-weight:700; font-size:0.8rem; letter-spacing:0.04em;
-      cursor:pointer; transition:all 0.15s;
+      width:100%; padding:0.82rem; background:var(--accent); color:#000; border:none;
+      border-radius:6px; font-family:'Syne',sans-serif; font-weight:700;
+      font-size:0.8rem; letter-spacing:0.04em; cursor:pointer; transition:all 0.15s;
     }
     .abtn:hover { background:#00ffb3; transform:translateY(-1px); }
-    .abtn.stop  { background:transparent; border:1px solid var(--offline); color:var(--offline); }
-    .abtn.stop:hover { background:rgba(255,107,107,0.1); transform:translateY(-1px); }
+    .abtn.stop { background:transparent; border:1px solid var(--offline); color:var(--offline); }
+    .abtn.stop:hover { background:rgba(255,107,107,0.1); }
 
+    /* ── ROOM INPUT ── */
     .rinput {
-      width:100%; background:var(--surface2); border:1px solid var(--border);
-      color:var(--text); padding:0.7rem 0.82rem; border-radius:6px;
-      font-family:'DM Mono',monospace; font-size:0.76rem;
-      outline:none; margin-bottom:0.55rem; transition:border-color 0.15s;
+      width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text);
+      padding:0.7rem 0.82rem; border-radius:6px; font-family:'DM Mono',monospace;
+      font-size:0.76rem; outline:none; margin-bottom:0.55rem; transition:border-color 0.15s;
     }
     .rinput:focus { border-color:var(--accent); }
 
+    /* ── MAP ── */
     #map { width:100%; height:100%; }
 
+    /* ── TOAST ── */
     .toast {
       position:fixed; bottom:1.4rem; right:1.4rem;
-      background:var(--surface2); border:1px solid var(--accent);
-      color:var(--accent); padding:0.65rem 1rem;
-      border-radius:6px; font-size:0.7rem; letter-spacing:0.04em;
-      z-index:9999; animation:sup 0.22s ease;
+      background:var(--surface2); border:1px solid var(--accent); color:var(--accent);
+      padding:0.65rem 1rem; border-radius:6px; font-size:0.7rem;
+      letter-spacing:0.04em; z-index:9999; animation:sup 0.22s ease;
     }
     .toast.err { border-color:var(--offline); color:var(--offline); }
     @keyframes sup { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
     .hidden { display:none !important; }
-
-    /* dark map tiles */
     .leaflet-tile { filter:brightness(0.55) saturate(0.4) hue-rotate(185deg); }
     .leaflet-container { background:#0a0a0f !important; }
 
     @media(max-width:680px){
-      main{ grid-template-columns:1fr; grid-template-rows:auto 1fr; height:auto; }
-      #map{ height:52vh; }
+      main { grid-template-columns:1fr; grid-template-rows:auto 1fr; height:auto; }
+      #map { height:52vh; }
     }
   </style>
 </head>
@@ -176,6 +180,7 @@
 <main>
   <aside class="sidebar">
 
+    <!-- MODE -->
     <div class="sec">
       <div class="lbl">Mode</div>
       <div class="rtoggle">
@@ -184,8 +189,9 @@
       </div>
     </div>
 
-    <!-- HOST -->
+    <!-- ═══ HOST PANEL ═══ -->
     <div id="hPanel">
+
       <div class="sec">
         <div class="lbl">Session Link</div>
         <div class="rbox">
@@ -206,6 +212,28 @@
         </div>
       </div>
 
+      <!-- PING INTERVAL -->
+      <div class="sec">
+        <div class="lbl">Ping Interval</div>
+        <div class="chips" id="intervalChips">
+          <button class="chip"     onclick="setInterval_(10000)">10s</button>
+          <button class="chip"     onclick="setInterval_(20000)">20s</button>
+          <button class="chip on"  onclick="setInterval_(30000)">30s</button>
+          <button class="chip"     onclick="setInterval_(45000)">45s</button>
+          <button class="chip"     onclick="setInterval_(60000)">1m</button>
+          <button class="chip"     onclick="setInterval_(120000)">2m</button>
+        </div>
+        <div class="custom-row">
+          <input type="number" id="customInterval" placeholder="e.g. 90" min="5" max="600" />
+          <span>sec</span>
+          <button onclick="applyCustomInterval()">Set</button>
+        </div>
+        <div class="trail-info" id="intervalInfo">
+          History depth: <span id="depthTxt">—</span> at this interval with 200 points
+        </div>
+      </div>
+
+      <!-- POSITION -->
       <div class="sec">
         <div class="lbl">Your Position</div>
         <div class="cgrid">
@@ -218,16 +246,37 @@
       <div class="sec">
         <button class="abtn" id="hBtn" onclick="toggleShare()">Start Sharing Location</button>
       </div>
+
     </div>
 
-    <!-- VIEWER -->
+    <!-- ═══ VIEWER PANEL ═══ -->
     <div id="vPanel" class="hidden">
+
       <div class="sec">
         <div class="lbl">Room ID</div>
         <input class="rinput" id="rInput" type="text" placeholder="e.g. abc-xyz-123" />
         <button class="abtn" onclick="startView()">View Location</button>
       </div>
 
+      <!-- TRAIL POINTS SELECTOR -->
+      <div class="sec">
+        <div class="lbl">Trail History</div>
+        <div class="chips" id="pointChips">
+          <button class="chip"     onclick="setPoints(10)">10</button>
+          <button class="chip"     onclick="setPoints(20)">20</button>
+          <button class="chip"     onclick="setPoints(25)">25</button>
+          <button class="chip on"  onclick="setPoints(50)">50</button>
+          <button class="chip"     onclick="setPoints(100)">100</button>
+          <button class="chip"     onclick="setPoints(200)">200</button>
+        </div>
+        <div class="trail-info" id="trailInfo">
+          Showing last <span id="pointsTxt">50</span> points
+          — host interval: <span id="hostIntervalTxt">—</span>
+          — covers ~<span id="coversTxt">—</span>
+        </div>
+      </div>
+
+      <!-- HOST POSITION -->
       <div class="sec">
         <div class="lbl">Host Position</div>
         <div class="cgrid">
@@ -236,6 +285,7 @@
         </div>
         <div class="ts" id="vTs">Waiting...</div>
       </div>
+
     </div>
 
   </aside>
@@ -244,43 +294,43 @@
 </main>
 
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// Step 1: inject Leaflet CSS + JS dynamically.
-// Step 2: only call bootApp() inside script.onload — guarantees L is defined.
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ── Load Leaflet dynamically ──────────────────────────────────────────────────
 (function loadLeaflet() {
-  // CSS
-  var css = document.createElement('link');
-  css.rel  = 'stylesheet';
-  css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  var css    = document.createElement('link');
+  css.rel    = 'stylesheet';
+  css.href   = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
   document.head.appendChild(css);
 
-  // JS
-  var js = document.createElement('script');
-  js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  var js     = document.createElement('script');
+  js.src     = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
   js.onload  = bootApp;
   js.onerror = function() { toast('⚠️ Map failed to load', true); };
   document.head.appendChild(js);
 })();
 
-// ─── App globals ─────────────────────────────────────────────────────────────
-var API   = window.location.origin;
-var PING  = 30000;
-var POLL  = 30000;
+// ── Globals ───────────────────────────────────────────────────────────────────
+var API         = window.location.origin;
+var PING_MS     = 30000;   // host ping interval (ms) — user adjustable
+var POLL_MS     = 30000;   // viewer poll interval (ms) — adapts to host
+var MAX_POINTS  = 200;     // absolute max stored in Redis
+var viewPoints  = 50;      // viewer's chosen trail length
 
 var map, hMarker, vMarker;
-var sharing  = false;
-var watchId  = null;
-var pingTmr  = null;
-var pollTmr  = null;
-var role     = 'host';
-var roomId   = '';
+var trailLine   = null;    // Leaflet polyline
+var trailDots   = [];      // small circle markers for past points
 
-// ─── Boot (runs only after Leaflet is fully loaded) ───────────────────────────
+var sharing     = false;
+var watchId     = null;
+var pingTmr     = null;
+var pollTmr     = null;
+var role        = 'host';
+var roomId      = '';
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
 function bootApp() {
   roomId = mkRoom();
   syncLinks();
+  updateDepthInfo();
 
   map = L.map('map', { zoomControl: true }).setView([20.5937, 78.9629], 5);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -288,7 +338,7 @@ function bootApp() {
     maxZoom: 19
   }).addTo(map);
 
-  // Auto-viewer if room in URL
+  // Auto-viewer if room in URL hash
   var m = location.hash.match(/room=([^&]+)/);
   if (m) {
     setRole('viewer');
@@ -297,7 +347,7 @@ function bootApp() {
   }
 }
 
-// ─── Room ─────────────────────────────────────────────────────────────────────
+// ── Room helpers ──────────────────────────────────────────────────────────────
 function mkRoom() {
   function s() { return Math.random().toString(36).slice(2, 6); }
   return s() + '-' + s() + '-' + s();
@@ -316,7 +366,7 @@ function copyLink() {
   navigator.clipboard.writeText(url).then(function() { toast('Link copied!'); });
 }
 
-// ─── Role ─────────────────────────────────────────────────────────────────────
+// ── Role switching ────────────────────────────────────────────────────────────
 function setRole(r) {
   role = r;
   document.getElementById('bHost').classList.toggle('on', r === 'host');
@@ -327,7 +377,36 @@ function setRole(r) {
   if (r === 'viewer') stopShare();
 }
 
-// ─── Host ─────────────────────────────────────────────────────────────────────
+// ── HOST: Interval selector ───────────────────────────────────────────────────
+function setInterval_(ms) {
+  PING_MS = ms;
+  // Update chip UI
+  var chips = document.getElementById('intervalChips').children;
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  event.target.classList.add('on');
+  updateDepthInfo();
+  // Restart timer if already sharing
+  if (sharing) { clearInterval(pingTmr); startPingTimer(); }
+}
+
+function applyCustomInterval() {
+  var val = parseInt(document.getElementById('customInterval').value);
+  if (!val || val < 5 || val > 600) { toast('Enter 5–600 seconds', true); return; }
+  PING_MS = val * 1000;
+  // Deselect all chips
+  var chips = document.getElementById('intervalChips').children;
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  updateDepthInfo();
+  toast('Interval set to ' + val + 's');
+  if (sharing) { clearInterval(pingTmr); startPingTimer(); }
+}
+
+function updateDepthInfo() {
+  var totalSecs = (PING_MS / 1000) * MAX_POINTS;
+  document.getElementById('depthTxt').textContent = fmtDuration(totalSecs);
+}
+
+// ── HOST: Sharing ─────────────────────────────────────────────────────────────
 function toggleShare() { sharing ? stopShare() : startShare(); }
 
 function startShare() {
@@ -338,19 +417,24 @@ function startShare() {
   btn.textContent = 'Stop Sharing';
   btn.classList.add('stop');
 
+  // Watch for immediate position updates
   watchId = navigator.geolocation.watchPosition(
     function(p) { onGPS(p.coords.latitude, p.coords.longitude); },
     function(e) { toast('GPS: ' + e.message, true); },
     { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 }
   );
 
+  startPingTimer();
+}
+
+function startPingTimer() {
   pingTmr = setInterval(function() {
     navigator.geolocation.getCurrentPosition(
       function(p) { doPing(p.coords.latitude, p.coords.longitude); },
       function() {},
       { maximumAge: 20000 }
     );
-  }, PING);
+  }, PING_MS);
 }
 
 function stopShare() {
@@ -375,36 +459,75 @@ function doPing(lat, lng) {
   fetch(API + '/api/ping', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ roomId: roomId, lat: lat, lng: lng, timestamp: Date.now() })
+    body: JSON.stringify({
+      roomId:    roomId,
+      lat:       lat,
+      lng:       lng,
+      timestamp: Date.now(),
+      interval:  PING_MS,
+    }),
   }).catch(function() { toast('Ping failed', true); });
 }
 
-// ─── Viewer ───────────────────────────────────────────────────────────────────
+// ── VIEWER: Points selector ───────────────────────────────────────────────────
+function setPoints(n) {
+  viewPoints = n;
+  var chips = document.getElementById('pointChips').children;
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  event.target.classList.add('on');
+  document.getElementById('pointsTxt').textContent = n;
+  // Re-poll immediately with new count
+  if (pollTmr) {
+    var rid = document.getElementById('rInput').value.trim();
+    if (rid) doPoll(rid);
+  }
+}
+
+// ── VIEWER: Polling ───────────────────────────────────────────────────────────
 function startView() {
   var rid = document.getElementById('rInput').value.trim();
   if (!rid) { toast('Enter a Room ID', true); return; }
   stopView();
   setStatus('live', 'Watching');
+  doPoll(rid);
+  pollTmr = setInterval(function() { doPoll(rid); }, POLL_MS);
+}
 
-  function poll() {
-    fetch(API + '/api/location/' + rid)
-      .then(function(r) {
-        if (!r.ok) { toast('Room not found or expired', true); return null; }
-        return r.json();
-      })
-      .then(function(d) {
-        if (!d || d.lat === undefined) return;
-        document.getElementById('vLat').textContent = parseFloat(d.lat).toFixed(6);
-        document.getElementById('vLng').textContent = parseFloat(d.lng).toFixed(6);
-        document.getElementById('vTs').textContent  = 'Last seen: ' + ago(d.timestamp);
-        putMarker('v', d.lat, d.lng);
-        setStatus('live', 'Live');
-      })
-      .catch(function() { setStatus('dead', 'Disconnected'); });
-  }
+function doPoll(rid) {
+  fetch(API + '/api/location/' + rid + '?points=' + viewPoints)
+    .then(function(r) {
+      if (!r.ok) {
+        if (r.status === 404) { setStatus('dead', 'No data yet'); return null; }
+        toast('Error fetching location', true); return null;
+      }
+      return r.json();
+    })
+    .then(function(d) {
+      if (!d) return;
 
-  poll();
-  pollTmr = setInterval(poll, POLL);
+      // Update latest coords
+      document.getElementById('vLat').textContent = parseFloat(d.lat).toFixed(6);
+      document.getElementById('vLng').textContent = parseFloat(d.lng).toFixed(6);
+      document.getElementById('vTs').textContent  = 'Last seen: ' + ago(d.timestamp);
+      setStatus('live', 'Live');
+
+      // Adapt poll rate to host's interval
+      if (d.interval && d.interval !== POLL_MS) {
+        POLL_MS = d.interval;
+        clearInterval(pollTmr);
+        pollTmr = setInterval(function() { doPoll(rid); }, POLL_MS);
+      }
+
+      // Update trail info
+      var hostInt = d.interval || 30000;
+      var covers  = fmtDuration((hostInt / 1000) * d.count);
+      document.getElementById('hostIntervalTxt').textContent = fmtMs(hostInt);
+      document.getElementById('coversTxt').textContent       = covers;
+
+      // Draw trail on map
+      drawTrail(d.trail);
+    })
+    .catch(function() { setStatus('dead', 'Disconnected'); });
 }
 
 function stopView() {
@@ -412,14 +535,55 @@ function stopView() {
   setStatus('', 'Idle');
 }
 
-// ─── Map markers ──────────────────────────────────────────────────────────────
+// ── MAP: Trail rendering ──────────────────────────────────────────────────────
+function drawTrail(trail) {
+  if (!trail || trail.length === 0) return;
+
+  // Clear existing trail dots
+  for (var i = 0; i < trailDots.length; i++) map.removeLayer(trailDots[i]);
+  trailDots = [];
+
+  // Remove existing polyline
+  if (trailLine) { map.removeLayer(trailLine); trailLine = null; }
+
+  var latlngs = trail.map(function(p) { return [p.lat, p.lng]; });
+  var total   = trail.length;
+
+  // Draw polyline connecting all points
+  trailLine = L.polyline(latlngs, {
+    color:   '#00e5a0',
+    weight:  2,
+    opacity: 0.4,
+    dashArray: '4 6',
+  }).addTo(map);
+
+  // Draw a small dot for each historical point (except the latest)
+  for (var j = 0; j < total - 1; j++) {
+    var p       = trail[j];
+    var opacity = 0.2 + (j / total) * 0.6; // older = more faded
+    var dot     = L.circleMarker([p.lat, p.lng], {
+      radius:      4,
+      fillColor:   '#00e5a0',
+      color:       'transparent',
+      fillOpacity: opacity,
+    }).bindTooltip(ago(p.timestamp), { permanent: false, direction: 'top' });
+    dot.addTo(map);
+    trailDots.push(dot);
+  }
+
+  // Latest point — bright animated marker
+  var latest = trail[total - 1];
+  putMarker('v', latest.lat, latest.lng);
+}
+
+// ── MAP: markers ──────────────────────────────────────────────────────────────
 function mkIcon(color) {
   return L.divIcon({
     className: '',
     html: '<div style="width:16px;height:16px;border-radius:50%;background:' + color +
           ';border:2.5px solid #fff;box-shadow:0 0 0 4px ' + color + '44,0 0 14px ' + color + '88;"></div>',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
+    iconSize:   [16, 16],
+    iconAnchor: [8, 8],
   });
 }
 
@@ -429,13 +593,13 @@ function putMarker(type, lat, lng) {
     else hMarker.setLatLng([lat, lng]);
     map.setView([lat, lng], 15);
   } else {
-    if (!vMarker) vMarker = L.marker([lat, lng], { icon: mkIcon('#ff6b6b') }).addTo(map).bindPopup('📍 Host');
+    if (!vMarker) vMarker = L.marker([lat, lng], { icon: mkIcon('#ff6b6b') }).addTo(map).bindPopup('📍 Host — latest');
     else vMarker.setLatLng([lat, lng]);
     map.setView([lat, lng], 15);
   }
 }
 
-// ─── Utils ────────────────────────────────────────────────────────────────────
+// ── Utils ─────────────────────────────────────────────────────────────────────
 function setStatus(type, text) {
   var d = document.getElementById('dot');
   d.className = 'dot' + (type ? ' ' + type : '');
@@ -447,6 +611,19 @@ function ago(ts) {
   if (s < 60)   return s + 's ago';
   if (s < 3600) return Math.floor(s / 60) + 'm ago';
   return Math.floor(s / 3600) + 'h ago';
+}
+
+function fmtDuration(totalSecs) {
+  if (totalSecs < 60)   return Math.round(totalSecs) + 's';
+  if (totalSecs < 3600) return Math.round(totalSecs / 60) + ' mins';
+  var h = (totalSecs / 3600).toFixed(1);
+  return h + ' hrs';
+}
+
+function fmtMs(ms) {
+  var s = ms / 1000;
+  if (s < 60) return s + 's';
+  return Math.round(s / 60) + 'm';
 }
 
 function toast(msg, isErr) {

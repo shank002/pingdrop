@@ -1,5 +1,5 @@
 // api/ping.js
-// POST /api/ping  { roomId, lat, lng, timestamp }
+// POST /api/ping  { roomId, lat, lng, timestamp, interval }
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')   return res.status(405).json({ error: 'Method not allowed' });
 
-  const { roomId, lat, lng, timestamp } = req.body || {};
+  const { roomId, lat, lng, timestamp, interval } = req.body || {};
 
   if (!roomId || lat === undefined || lng === undefined) {
     return res.status(400).json({ error: 'Missing roomId, lat or lng' });
@@ -22,25 +22,34 @@ module.exports = async function handler(req, res) {
   }
 
   const key   = 'room:' + roomId;
-  const value = JSON.stringify({ lat, lng, timestamp: timestamp || Date.now() });
-  const ttl   = 86400; // 24 hours
+  const MAX   = 200; // store max 200 points
+  const TTL   = 86400; // 24 hour expiry
+  const point = JSON.stringify({
+    lat,
+    lng,
+    timestamp: timestamp || Date.now(),
+    interval:  interval  || 30000,
+  });
 
   try {
-    // Correct Upstash REST format: POST with JSON array body
-    const response = await fetch(REDIS_URL, {
+    // Pipeline: RPUSH → LTRIM → EXPIRE (3 commands in one request)
+    const response = await fetch(REDIS_URL + '/pipeline', {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + REDIS_TOKEN,
+        Authorization:  'Bearer ' + REDIS_TOKEN,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(['SETEX', key, ttl, value]),
+      body: JSON.stringify([
+        ['RPUSH',  key, point],
+        ['LTRIM',  key, -MAX, -1],
+        ['EXPIRE', key, TTL],
+      ]),
     });
 
     const data = await response.json();
-    console.log('Upstash SETEX response:', JSON.stringify(data));
 
-    if (!response.ok || data.error) {
-      console.error('Upstash setex error:', data);
+    if (!response.ok) {
+      console.error('Upstash pipeline error:', data);
       return res.status(500).json({ error: 'Redis write failed', detail: data });
     }
 

@@ -1,5 +1,5 @@
 // api/location/[roomId].js
-// GET /api/location/:roomId
+// GET /api/location/:roomId?points=50
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,6 +9,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET')    return res.status(405).json({ error: 'Method not allowed' });
 
   const roomId = req.query.roomId;
+  const points = Math.min(parseInt(req.query.points) || 50, 200); // default 50, max 200
 
   if (!roomId) {
     return res.status(400).json({ error: 'roomId is required' });
@@ -24,37 +25,44 @@ module.exports = async function handler(req, res) {
   const key = 'room:' + roomId;
 
   try {
-    // Correct Upstash REST format: POST with JSON array body
+    // LRANGE with negative index to get last N points
     const response = await fetch(REDIS_URL, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + REDIS_TOKEN,
+        Authorization:  'Bearer ' + REDIS_TOKEN,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(['GET', key]),
+      body: JSON.stringify(['LRANGE', key, -points, -1]),
     });
 
     const data = await response.json();
-    console.log('Upstash GET response:', JSON.stringify(data));
 
-    if (!response.ok || data.error) {
-      console.error('Upstash get error:', data);
+    if (!response.ok) {
+      console.error('Upstash LRANGE error:', data);
       return res.status(500).json({ error: 'Redis read failed', detail: data });
     }
 
-    if (data.result === null || data.result === undefined) {
+    // Empty list = room not found or expired
+    if (!data.result || data.result.length === 0) {
       return res.status(404).json({ error: 'Room not found or expired' });
     }
 
-    const location = typeof data.result === 'string'
-      ? JSON.parse(data.result)
-      : data.result;
+    // Parse each point
+    const trail = data.result.map(function(item) {
+      return typeof item === 'string' ? JSON.parse(item) : item;
+    });
+
+    // Latest point
+    const latest = trail[trail.length - 1];
 
     return res.status(200).json({
       roomId,
-      lat:       location.lat,
-      lng:       location.lng,
-      timestamp: location.timestamp,
+      lat:       latest.lat,
+      lng:       latest.lng,
+      timestamp: latest.timestamp,
+      interval:  latest.interval || 30000,
+      trail:     trail,
+      count:     trail.length,
     });
   } catch (err) {
     console.error('Location handler error:', err.message);
