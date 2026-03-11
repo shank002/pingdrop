@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PingDrop — Live Location</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface2: #1a1a26;
+      --border: #2a2a3d;
+      --accent: #00e5a0;
+      --text: #e8e8f0;
+      --muted: #6b6b8a;
+      --offline: #ff6b6b;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; overflow:hidden; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+    }
+    header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.8rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; }
+    .logo span { color: var(--accent); }
+
+    .badge {
+      display: flex; align-items: center; gap: 0.45rem;
+      font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); padding: 0.32rem 0.8rem;
+      border: 1px solid var(--border); border-radius: 2rem;
+    }
+    .dot {
+      width:7px; height:7px; border-radius:50%;
+      background: var(--muted); transition: background 0.3s, box-shadow 0.3s;
+    }
+    .dot.live   { background: var(--accent); box-shadow: 0 0 7px var(--accent); animation: blink 2s infinite; }
+    .dot.dead   { background: var(--offline); }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    main {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      height: calc(100vh - 56px);
+    }
+
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+    }
+
+    .sec { padding: 1.1rem 1.3rem; border-bottom: 1px solid var(--border); }
+    .lbl {
+      font-size: 0.6rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.7rem;
+    }
+
+    .rtoggle { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; }
+    .rbtn {
+      padding: 0.62rem; border: 1px solid var(--border);
+      background: transparent; color: var(--muted);
+      font-family:'DM Mono',monospace; font-size:0.7rem;
+      cursor: pointer; border-radius:6px; transition:all 0.15s;
+    }
+    .rbtn:hover { border-color:var(--accent); color:var(--accent); }
+    .rbtn.on    { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
+
+    .rbox {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:6px; padding:0.75rem 0.9rem;
+      display:flex; align-items:center; justify-content:space-between; gap:0.5rem;
+    }
+    .rid { font-size:0.8rem; color:var(--accent); letter-spacing:0.06em; word-break:break-all; }
+    .cbtn {
+      background:none; border:1px solid var(--border); color:var(--muted);
+      padding:0.26rem 0.5rem; border-radius:4px; cursor:pointer;
+      font-size:0.6rem; font-family:'DM Mono',monospace; white-space:nowrap;
+      transition:all 0.15s;
+    }
+    .cbtn:hover { border-color:var(--accent); color:var(--accent); }
+
+    .sbtns { display:flex; flex-direction:column; gap:0.45rem; }
+    .sbtn {
+      display:flex; align-items:center; gap:0.65rem;
+      padding:0.68rem 0.85rem; border:1px solid var(--border);
+      background:transparent; color:var(--text);
+      font-family:'DM Mono',monospace; font-size:0.7rem;
+      cursor:pointer; text-decoration:none; border-radius:6px;
+      transition:all 0.15s;
+    }
+    .sbtn:hover { transform:translateX(3px); }
+    .sbtn.wa:hover { border-color:#25d366; color:#25d366; }
+    .sbtn.em:hover { border-color:#7b9cff; color:#7b9cff; }
+    .si {
+      width:25px; height:25px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.82rem; flex-shrink:0;
+    }
+    .si.wa { background:rgba(37,211,102,0.14); }
+    .si.em { background:rgba(123,156,255,0.14); }
+
+    .cgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.4rem; }
+    .cbox {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:6px; padding:0.62rem 0.72rem;
+    }
+    .clbl { font-size:0.57rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.18rem; }
+    .cval { font-size:0.76rem; color:var(--accent); }
+    .ts   { margin-top:0.4rem; font-size:0.65rem; color:var(--muted); }
+
+    .abtn {
+      width:100%; padding:0.82rem;
+      background:var(--accent); color:#000; border:none;
+      border-radius:6px; font-family:'Syne',sans-serif;
+      font-weight:700; font-size:0.8rem; letter-spacing:0.04em;
+      cursor:pointer; transition:all 0.15s;
+    }
+    .abtn:hover { background:#00ffb3; transform:translateY(-1px); }
+    .abtn.stop  { background:transparent; border:1px solid var(--offline); color:var(--offline); }
+    .abtn.stop:hover { background:rgba(255,107,107,0.1); transform:translateY(-1px); }
+
+    .rinput {
+      width:100%; background:var(--surface2); border:1px solid var(--border);
+      color:var(--text); padding:0.7rem 0.82rem; border-radius:6px;
+      font-family:'DM Mono',monospace; font-size:0.76rem;
+      outline:none; margin-bottom:0.55rem; transition:border-color 0.15s;
+    }
+    .rinput:focus { border-color:var(--accent); }
+
+    #map { width:100%; height:100%; }
+
+    .toast {
+      position:fixed; bottom:1.4rem; right:1.4rem;
+      background:var(--surface2); border:1px solid var(--accent);
+      color:var(--accent); padding:0.65rem 1rem;
+      border-radius:6px; font-size:0.7rem; letter-spacing:0.04em;
+      z-index:9999; animation:sup 0.22s ease;
+    }
+    .toast.err { border-color:var(--offline); color:var(--offline); }
+    @keyframes sup { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    .hidden { display:none !important; }
+
+    /* dark map tiles */
+    .leaflet-tile { filter:brightness(0.55) saturate(0.4) hue-rotate(185deg); }
+    .leaflet-container { background:#0a0a0f !important; }
+
+    @media(max-width:680px){
+      main{ grid-template-columns:1fr; grid-template-rows:auto 1fr; height:auto; }
+      #map{ height:52vh; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ping<span>Drop</span></div>
+  <div class="badge">
+    <div class="dot" id="dot"></div>
+    <span id="stxt">Idle</span>
+  </div>
+</header>
+
+<main>
+  <aside class="sidebar">
+
+    <div class="sec">
+      <div class="lbl">Mode</div>
+      <div class="rtoggle">
+        <button class="rbtn on" id="bHost" onclick="setRole('host')">📡 Share</button>
+        <button class="rbtn"    id="bView" onclick="setRole('viewer')">👁 View</button>
+      </div>
+    </div>
+
+    <!-- HOST -->
+    <div id="hPanel">
+      <div class="sec">
+        <div class="lbl">Session Link</div>
+        <div class="rbox">
+          <span class="rid" id="rDisp">—</span>
+          <button class="cbtn" onclick="copyLink()">COPY</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="lbl">Share Via</div>
+        <div class="sbtns">
+          <a class="sbtn wa" id="waBtn" href="#" target="_blank" rel="noopener">
+            <div class="si wa">💬</div> Share on WhatsApp
+          </a>
+          <a class="sbtn em" id="emBtn" href="#" target="_blank" rel="noopener">
+            <div class="si em">✉️</div> Share via Email
+          </a>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="lbl">Your Position</div>
+        <div class="cgrid">
+          <div class="cbox"><div class="clbl">Latitude</div><div class="cval" id="hLat">—</div></div>
+          <div class="cbox"><div class="clbl">Longitude</div><div class="cval" id="hLng">—</div></div>
+        </div>
+        <div class="ts" id="hTs">Not started</div>
+      </div>
+
+      <div class="sec">
+        <button class="abtn" id="hBtn" onclick="toggleShare()">Start Sharing Location</button>
+      </div>
+    </div>
+
+    <!-- VIEWER -->
+    <div id="vPanel" class="hidden">
+      <div class="sec">
+        <div class="lbl">Room ID</div>
+        <input class="rinput" id="rInput" type="text" placeholder="e.g. abc-xyz-123" />
+        <button class="abtn" onclick="startView()">View Location</button>
+      </div>
+
+      <div class="sec">
+        <div class="lbl">Host Position</div>
+        <div class="cgrid">
+          <div class="cbox"><div class="clbl">Latitude</div><div class="cval" id="vLat">—</div></div>
+          <div class="cbox"><div class="clbl">Longitude</div><div class="cval" id="vLng">—</div></div>
+        </div>
+        <div class="ts" id="vTs">Waiting...</div>
+      </div>
+    </div>
+
+  </aside>
+
+  <div><div id="map"></div></div>
+</main>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// Step 1: inject Leaflet CSS + JS dynamically.
+// Step 2: only call bootApp() inside script.onload — guarantees L is defined.
+// ─────────────────────────────────────────────────────────────────────────────
+
+(function loadLeaflet() {
+  // CSS
+  var css = document.createElement('link');
+  css.rel  = 'stylesheet';
+  css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(css);
+
+  // JS
+  var js = document.createElement('script');
+  js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  js.onload  = bootApp;
+  js.onerror = function() { toast('⚠️ Map failed to load', true); };
+  document.head.appendChild(js);
+})();
+
+// ─── App globals ─────────────────────────────────────────────────────────────
+var API   = window.location.origin;
+var PING  = 30000;
+var POLL  = 30000;
+
+var map, hMarker, vMarker;
+var sharing  = false;
+var watchId  = null;
+var pingTmr  = null;
+var pollTmr  = null;
+var role     = 'host';
+var roomId   = '';
+
+// ─── Boot (runs only after Leaflet is fully loaded) ───────────────────────────
+function bootApp() {
+  roomId = mkRoom();
+  syncLinks();
+
+  map = L.map('map', { zoomControl: true }).setView([20.5937, 78.9629], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Auto-viewer if room in URL
+  var m = location.hash.match(/room=([^&]+)/);
+  if (m) {
+    setRole('viewer');
+    document.getElementById('rInput').value = m[1];
+    startView();
+  }
+}
+
+// ─── Room ─────────────────────────────────────────────────────────────────────
+function mkRoom() {
+  function s() { return Math.random().toString(36).slice(2, 6); }
+  return s() + '-' + s() + '-' + s();
+}
+
+function syncLinks() {
+  document.getElementById('rDisp').textContent = roomId;
+  var url = location.origin + location.pathname + '#room=' + roomId;
+  var msg = encodeURIComponent('📍 Track my live location:\n' + url);
+  document.getElementById('waBtn').href = 'https://wa.me/?text=' + msg;
+  document.getElementById('emBtn').href = 'mailto:?subject=' + encodeURIComponent('My Live Location') + '&body=' + msg;
+}
+
+function copyLink() {
+  var url = location.origin + location.pathname + '#room=' + roomId;
+  navigator.clipboard.writeText(url).then(function() { toast('Link copied!'); });
+}
+
+// ─── Role ─────────────────────────────────────────────────────────────────────
+function setRole(r) {
+  role = r;
+  document.getElementById('bHost').classList.toggle('on', r === 'host');
+  document.getElementById('bView').classList.toggle('on', r === 'viewer');
+  document.getElementById('hPanel').classList.toggle('hidden', r !== 'host');
+  document.getElementById('vPanel').classList.toggle('hidden', r !== 'viewer');
+  if (r === 'host')   stopView();
+  if (r === 'viewer') stopShare();
+}
+
+// ─── Host ─────────────────────────────────────────────────────────────────────
+function toggleShare() { sharing ? stopShare() : startShare(); }
+
+function startShare() {
+  if (!navigator.geolocation) { toast('Geolocation not supported', true); return; }
+  sharing = true;
+  setStatus('live', 'Broadcasting');
+  var btn = document.getElementById('hBtn');
+  btn.textContent = 'Stop Sharing';
+  btn.classList.add('stop');
+
+  watchId = navigator.geolocation.watchPosition(
+    function(p) { onGPS(p.coords.latitude, p.coords.longitude); },
+    function(e) { toast('GPS: ' + e.message, true); },
+    { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 }
+  );
+
+  pingTmr = setInterval(function() {
+    navigator.geolocation.getCurrentPosition(
+      function(p) { doPing(p.coords.latitude, p.coords.longitude); },
+      function() {},
+      { maximumAge: 20000 }
+    );
+  }, PING);
+}
+
+function stopShare() {
+  sharing = false;
+  if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+  clearInterval(pingTmr); pingTmr = null;
+  setStatus('', 'Idle');
+  var btn = document.getElementById('hBtn');
+  btn.textContent = 'Start Sharing Location';
+  btn.classList.remove('stop');
+}
+
+function onGPS(lat, lng) {
+  document.getElementById('hLat').textContent = lat.toFixed(6);
+  document.getElementById('hLng').textContent = lng.toFixed(6);
+  document.getElementById('hTs').textContent  = 'Updated ' + new Date().toLocaleTimeString();
+  putMarker('h', lat, lng);
+  doPing(lat, lng);
+}
+
+function doPing(lat, lng) {
+  fetch(API + '/api/ping', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ roomId: roomId, lat: lat, lng: lng, timestamp: Date.now() })
+  }).catch(function() { toast('Ping failed', true); });
+}
+
+// ─── Viewer ───────────────────────────────────────────────────────────────────
+function startView() {
+  var rid = document.getElementById('rInput').value.trim();
+  if (!rid) { toast('Enter a Room ID', true); return; }
+  stopView();
+  setStatus('live', 'Watching');
+
+  function poll() {
+    fetch(API + '/api/location/' + rid)
+      .then(function(r) {
+        if (!r.ok) { toast('Room not found or expired', true); return null; }
+        return r.json();
+      })
+      .then(function(d) {
+        if (!d || d.lat === undefined) return;
+        document.getElementById('vLat').textContent = parseFloat(d.lat).toFixed(6);
+        document.getElementById('vLng').textContent = parseFloat(d.lng).toFixed(6);
+        document.getElementById('vTs').textContent  = 'Last seen: ' + ago(d.timestamp);
+        putMarker('v', d.lat, d.lng);
+        setStatus('live', 'Live');
+      })
+      .catch(function() { setStatus('dead', 'Disconnected'); });
+  }
+
+  poll();
+  pollTmr = setInterval(poll, POLL);
+}
+
+function stopView() {
+  clearInterval(pollTmr); pollTmr = null;
+  setStatus('', 'Idle');
+}
+
+// ─── Map markers ──────────────────────────────────────────────────────────────
+function mkIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: '<div style="width:16px;height:16px;border-radius:50%;background:' + color +
+          ';border:2.5px solid #fff;box-shadow:0 0 0 4px ' + color + '44,0 0 14px ' + color + '88;"></div>',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+}
+
+function putMarker(type, lat, lng) {
+  if (type === 'h') {
+    if (!hMarker) hMarker = L.marker([lat, lng], { icon: mkIcon('#00e5a0') }).addTo(map).bindPopup('📍 You');
+    else hMarker.setLatLng([lat, lng]);
+    map.setView([lat, lng], 15);
+  } else {
+    if (!vMarker) vMarker = L.marker([lat, lng], { icon: mkIcon('#ff6b6b') }).addTo(map).bindPopup('📍 Host');
+    else vMarker.setLatLng([lat, lng]);
+    map.setView([lat, lng], 15);
+  }
+}
+
+// ─── Utils ────────────────────────────────────────────────────────────────────
+function setStatus(type, text) {
+  var d = document.getElementById('dot');
+  d.className = 'dot' + (type ? ' ' + type : '');
+  document.getElementById('stxt').textContent = text;
+}
+
+function ago(ts) {
+  var s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60)   return s + 's ago';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
+  return Math.floor(s / 3600) + 'h ago';
+}
+
+function toast(msg, isErr) {
+  var t = document.createElement('div');
+  t.className = 'toast' + (isErr ? ' err' : '');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { t.remove(); }, 3000);
+}
+</script>
+
+</body>
+</html>
